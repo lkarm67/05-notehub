@@ -1,7 +1,10 @@
-interface Note {
+export type NoteTag = "Work" | "Personal" | "Meeting" | "Shopping" | "Todo";
 
-}
-
-interface NoteTag {
+export interface Note {
     id: string;
-}
+    title: string;
+    content: string;
+    createdAt: string; 
+    updatedAt: string;
+    tag: NoteTag;
+  }
