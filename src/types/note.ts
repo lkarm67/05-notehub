@@ -8,3 +8,9 @@ export interface Note {
     updatedAt: string;
     tag: NoteTag;
   }
+
+  export interface CreateNoteParams {
+    title: string;
+    content: string;
+    tag: NoteTag;
+  }

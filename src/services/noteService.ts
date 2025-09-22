@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Note, NoteTag } from "../types/note";
+import type { Note, NoteTag, CreateNoteParams } from "../types/note";
 
 export interface FetchNotesParams {
   search?: string;
@@ -13,13 +13,6 @@ export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
-
-export interface CreateNoteParams {
-  title: string;
-  content: string;
-  tag: NoteTag;
-}
-
 
 const NOTEHUB_TOKEN = import.meta.env.VITE_NOTEHUB_TOKEN;
 
