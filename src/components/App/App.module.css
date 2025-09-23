@@ -10,12 +10,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 300px;
     padding: 16px 0;
     background-color: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
 }
 
-.button {
+.createButton {
     padding: 6px 12px;
     font-size: 16px;
     color: #fff;
