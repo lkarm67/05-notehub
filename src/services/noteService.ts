@@ -1,12 +1,10 @@
 import axios from "axios";
-import type { Note, NoteTag, CreateNoteParams } from "../types/note";
+import type { Note, CreateNoteParams } from "../types/note";
 
 export interface FetchNotesParams {
   search?: string;
-  tag?: NoteTag;
   page?: number;
   perPage?: number;
-  sortBy?: "created" | "updated";
 }
 
 export interface FetchNotesResponse {
@@ -27,6 +25,7 @@ export const fetchNotes = async (
   params: FetchNotesParams
 ): Promise<FetchNotesResponse> => {
   const { data } = await api.get<FetchNotesResponse>("/notes", { params });
+  console.log("Fetching notes with params:", params);
   return data;
 };
 

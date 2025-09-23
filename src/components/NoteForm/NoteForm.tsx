@@ -1,11 +1,12 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import css from "./NoteForm.module.css";
+import type { NoteTag } from "../../types/note";
 
 export interface NoteFormValues {
   title: string;
   content: string;
-  tag: string;
+  tag: NoteTag;
 }
 
 const validationSchema = Yup.object({
