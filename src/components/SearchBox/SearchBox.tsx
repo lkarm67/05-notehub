@@ -4,13 +4,19 @@ import { useDebounce } from "use-debounce";
 import css from "./SearchBox.module.css";
 
 interface SearchBoxProps {
+  value: string;  
   onSearch: (value: string) => void;
 }
 
-export default function SearchBox({ onSearch }: SearchBoxProps) {
-  const [inputValue, setInputValue] = useState("");
-  const [debouncedValue] = useDebounce(inputValue, 500);
+export default function SearchBox({ value, onSearch }: SearchBoxProps) {
+  const [inputValue, setInputValue] = useState(value);
+  const [debouncedValue] = useDebounce(inputValue, 1000);
 
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
+
+  
   useEffect(() => {
     onSearch(debouncedValue.trim());
   }, [debouncedValue, onSearch]);

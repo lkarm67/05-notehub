@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchNotes, createNote, deleteNote } from "../../services/noteService";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNotes } from "../../services/noteService";
 import type { FetchNotesResponse } from "../../services/noteService";
 import NoteList from "../NoteList/NoteList";
 import { Pagination } from "../Pagination/Pagination";
 import { Modal } from "../Modal/Modal";
 import { NoteForm } from "../NoteForm/NoteForm";
-import type { NoteFormValues } from "../NoteForm/NoteForm";
 import SearchBox from "../SearchBox/SearchBox";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
@@ -18,12 +17,10 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const queryClient = useQueryClient();
-
   const { data, isLoading, isError } = useQuery<FetchNotesResponse, Error>({
     queryKey: ["notes", searchQuery, page],
     queryFn: () => fetchNotes({ search: searchQuery, page, perPage: 12 }),
-});
+  });
 
   useEffect(() => {
     if (data && data.notes.length === 0) {
@@ -31,43 +28,19 @@ export default function App() {
     }
   }, [data]);
 
-  const createNoteMutation = useMutation({
-    mutationFn: createNote,
-    onSuccess: () => {
-      toast.success("Note created!");
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
-    onError: () => {
-      toast.error("Failed to create note");
-    },
-  });
-
-  const deleteNoteMutation = useMutation({
-    mutationFn: deleteNote,
-    onSuccess: () => {
-      toast.success("Note deleted!");
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
-    onError: () => {
-      toast.error("Failed to delete note");
-    },
-  });
-
-  const handleCreateNote = (values: NoteFormValues) => {
-    createNoteMutation.mutate(values);
-    setIsModalOpen(false);
-  };
-
-  const handleDeleteNote = (id: string) => {
-    deleteNoteMutation.mutate(id);
+  const handleSearch = (value: string) => {
+    if (value !== searchQuery) setPage(1);
+    setSearchQuery(value);
   };
 
   return (
     <div className={css.container}>
       <header className={css.toolbar}>
         <Toaster position="top-right" reverseOrder={false} />
-        
-        <SearchBox onSearch={setSearchQuery} />
+
+        <SearchBox
+          value={searchQuery}
+          onSearch={handleSearch} />
 
         {data && data.totalPages > 1 && (
           <Pagination
@@ -91,18 +64,19 @@ export default function App() {
       {data && (
         <NoteList
           notes={data.notes}
-          onDelete={handleDeleteNote}
         />
       )}
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
           <NoteForm
-            onSubmit={handleCreateNote}
             onCancel={() => setIsModalOpen(false)}
+            onCreated={() => setPage(1)}
           />
         </Modal>
       )}
     </div>
   );
 }
+
+
