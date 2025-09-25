@@ -11,15 +11,21 @@ import SearchBox from "../SearchBox/SearchBox";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import css from "./App.module.css";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const debouncedSetSearchQuery = useDebouncedCallback((value: string) => {
+    setPage(1);
+    setSearchQuery(value.trim());
+  }, 500);
+
   const { data, isLoading, isError } = useQuery<FetchNotesResponse, Error>({
     queryKey: ["notes", searchQuery, page],
-    queryFn: () => fetchNotes({ search: searchQuery, page, perPage: 12 }),
+    queryFn: () => fetchNotes({ search: searchQuery || undefined, page, perPage: 12 }),
   });
 
   useEffect(() => {
@@ -28,11 +34,6 @@ export default function App() {
     }
   }, [data]);
 
-  const handleSearch = (value: string) => {
-    if (value !== searchQuery) setPage(1);
-    setSearchQuery(value);
-  };
-
   return (
     <div className={css.container}>
       <header className={css.toolbar}>
@@ -40,7 +41,7 @@ export default function App() {
 
         <SearchBox
           value={searchQuery}
-          onSearch={handleSearch} />
+          onSearch={debouncedSetSearchQuery} />
 
         {data && data.totalPages > 1 && (
           <Pagination
