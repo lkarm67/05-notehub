@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "../../services/noteService";
 import type { FetchNotesResponse } from "../../services/noteService";
 import NoteList from "../NoteList/NoteList";
@@ -26,6 +26,7 @@ export default function App() {
   const { data, isLoading, isError } = useQuery<FetchNotesResponse, Error>({
     queryKey: ["notes", searchQuery, page],
     queryFn: () => fetchNotes({ search: searchQuery || undefined, page, perPage: 12 }),
+    placeholderData: keepPreviousData,
   });
 
   useEffect(() => {
